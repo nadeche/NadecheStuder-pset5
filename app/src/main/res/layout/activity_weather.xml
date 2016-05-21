@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.nadeche.nadechestuder_pset5.WeatherActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/background_photo_activity"/>
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dateTextView"
+            android:text="@string/weather_data_from"
+            android:textStyle="bold"
+            android:textSize="18sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/lastUpdateTextView"
+            android:text="@string/last_update"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/minTempTextView"
+            android:text="@string/min_temp_c"
+            android:layout_alignTop="@+id/maxTempTextView"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:textSize="20sp"
+            android:background="@color/backgroundText" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/minCelsiusTextView"
+            android:layout_below="@+id/minTempTextView"
+            android:layout_alignLeft="@+id/minTempTextView"
+            android:text="C"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:background="@color/backgroundText" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/maxTempTextView"
+            android:text="@string/max_temp_c"
+            android:layout_marginTop="155dp"
+            android:layout_below="@+id/dateTextView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textSize="20sp"
+            android:background="@color/backgroundText" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/maxCelsiusTextView"
+            android:layout_below="@+id/maxTempTextView"
+            android:layout_alignRight="@+id/maxTempTextView"
+            android:text="C"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:background="@color/backgroundText" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="90dp"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:background="@color/backgroundText">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/windTextView"
+                    android:text="@string/wind_speed"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/opacityTextView"
+                    android:text="@string/opacity"
+                    android:layout_marginTop="20dp"
+                    android:textSize="18sp"
+                    android:layout_gravity="end"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/windDataTextView"
+                    android:text="Speed"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_gravity= "start"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/opacityDataTextView"
+                    android:text="Clear"
+                    android:layout_marginTop="20dp"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_gravity= "start"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>
