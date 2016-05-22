@@ -22,7 +22,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/curiosity_sol1344_navcamleftb_ratio"/>
+            android:src="@drawable/curiosity_sol1_344_navcamleftb_ratio"/>
     </FrameLayout>
 
     <RelativeLayout
