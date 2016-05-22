@@ -38,6 +38,8 @@ import java.util.Date;
  * Since weather data started to come in form solar day 15 the user can search from this day on.
  * From day 15 on curiosity didn't send back data every day, so it could be that there is no weather data
  * for the solar day the user searched for. In that case the previous data stays on screen.
+ * To go back to the latest weather data (or check if there are new latest data)
+ * the user can tap on the home icon in the actionbar.
  *
  * Weather data is gathered true the API from: marsweather.ingenology.com
  * */
@@ -76,8 +78,7 @@ public class WeatherActivity extends AppCompatActivity {
 
         // when the activity runs for the first time get the latest weather data
         if(savedInstanceState == null){
-            RequestModel request = new RequestModel(-1, true);
-            new FetchData().execute(request);
+            getApiData(-1, true);
         }
         // when the activity has already run, restore the last requested weather data
         else {
@@ -97,8 +98,12 @@ public class WeatherActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.dateRange:
+                // let the user pick a different solar day
                 showChooseNewSolDialog();
                 return true;
+            case R.id.home:
+                // get latest weather data
+                getApiData(-1, true);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -117,7 +122,13 @@ public class WeatherActivity extends AppCompatActivity {
         outState.putSerializable("weatherModel", weatherData);
     }
 
-    public class FetchData extends AsyncTask<RequestModel, String, WeatherDataModel> {
+    /**
+     * This class runs in the background of the activity to get the weather data from the api.
+     * When called it needs to be passed a Request model to tell what kind of data to get.
+     * While fetching data it displays a progress dialog to the user.
+     * The data is saved in a WeatherDataModel from where the data is displayed on screen.
+     * */
+    public class FetchData extends AsyncTask<RequestModel, Void, WeatherDataModel> {
 
         ProgressDialog progressDialog;
 
@@ -130,15 +141,18 @@ public class WeatherActivity extends AppCompatActivity {
         }
 
         @Override
-        protected WeatherDataModel doInBackground(RequestModel... params) {
+        protected WeatherDataModel doInBackground(RequestModel... requestModels) {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
+            // base url
             String get = "http://marsweather.ingenology.com/v1/";
-            if(params[0].latest){
+            if(requestModels[0].latest){
+                // create url to get latest data
                 get  += "latest/?format=json";
             }
             else {
-                get += "archive/?sol=" + params[0].sol + "&format=json";
+                // create url to get data about the requested solar day
+                get += "archive/?sol=" + requestModels[0].sol + "&format=json";
             }
 
             try {
@@ -149,25 +163,28 @@ public class WeatherActivity extends AppCompatActivity {
                 InputStream stream = urlConnection.getInputStream();
 
                 reader = new BufferedReader(new InputStreamReader(stream));
-
                 StringBuffer buffer = new StringBuffer();
                 String line = "";
+
+                // convert received data to a string
                 while ((line = reader.readLine()) != null) {
                     buffer.append(line);
                 }
 
-                String completeJsonString = buffer.toString();
+                // convert complete data to Json object
+                JSONObject reportJsonObject = new JSONObject(buffer.toString());
 
-                JSONObject reportJsonObject = new JSONObject(completeJsonString);
-
-                if(!params[0].latest && reportJsonObject.getInt("count") == 0) {
+                // when the returned Json object of a requested solar day is empty quit this action
+                if(!requestModels[0].latest && reportJsonObject.getInt("count") == 0) {
                     return null;
                 }
 
                 JSONObject weatherDataJsonObj;
-                if(params[0].latest) {
+                // when the latest data was requested there is no extra Json array
+                if(requestModels[0].latest) {
                     weatherDataJsonObj = reportJsonObject.getJSONObject("report");
                 }
+                // when a particular solar day was requested there is an extra Json array to get
                 else {
                     JSONArray resultArrayJsonObject = reportJsonObject.getJSONArray("results");
                     weatherDataJsonObj = resultArrayJsonObject.getJSONObject(0);
@@ -175,11 +192,13 @@ public class WeatherActivity extends AppCompatActivity {
 
                 weatherData = new WeatherDataModel();
 
+                // convert the returned terrestrial date to a EU date format and save it in weatherDataModel
                 SimpleDateFormat originalDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
                 Date date = originalDateFormat.parse(weatherDataJsonObj.getString("terrestrial_date"));
-
                 weatherData.setTerrestrial_date(dateFormat.format(date));
+
+                // save the other returned data to in a weatherDataModel
                 weatherData.setSol(weatherDataJsonObj.getLong("sol"));
                 weatherData.setMax_temp(weatherDataJsonObj.getLong("max_temp"));
                 weatherData.setMin_temp(weatherDataJsonObj.getLong("min_temp"));
@@ -187,10 +206,13 @@ public class WeatherActivity extends AppCompatActivity {
                 weatherData.setWind_speed(weatherDataJsonObj.optLong("wind_speed"));
                 weatherData.setSeason(weatherDataJsonObj.getString("season"));
 
-                if(params[0].latest) {
+                // when the latest data are requested save the solar date(for max numberPicker)
+                if(requestModels[0].latest) {
                     latestSol = (int) weatherData.getSol();
                 }
+
                 return weatherData;
+
             } catch (IOException | JSONException | ParseException e) {
                 e.printStackTrace();
             } finally {
@@ -213,36 +235,58 @@ public class WeatherActivity extends AppCompatActivity {
             super.onPostExecute(weatherData);
             progressDialog.dismiss();
 
+            // when doInBackground has quit because there was no data, let the user know
             if(weatherData == null){
                 Toast.makeText(WeatherActivity.this, getText(R.string.toast_message), Toast.LENGTH_SHORT).show();
                 return;
             }
+            // display fetched weather data
             setDataToView(weatherData);
         }
     }
 
+    /**
+     * This method displays the receivedWeather data to the screen.
+     * It checks whether the weather status has a value.
+     * It gets the current date and time to display as update time.
+     * */
     public void setDataToView (WeatherDataModel weatherData) {
+
         solTextView.setText(String.valueOf(weatherData.getSol()));
         dateOfDataTextView.setText(weatherData.getTerrestrial_date());
+
+        // set a degrees celsius behind the temperatures values
         maxCelsiusTextView.setText(String.valueOf(weatherData.getMax_temp())+ (char) 0x00B0 + "C");
         minCelsiusTextView.setText(String.valueOf(weatherData.getMin_temp()) + (char) 0x00B0 + "C");
+
+        // display "no data" when there is no weather status
         if(weatherData.getAtmo_opacity().equals("null")) {
             opacityDataTextView.setText(getText(R.string.no_data));
         }
         else {
             opacityDataTextView.setText(weatherData.getAtmo_opacity());
         }
+
         windSpeedDataTextView.setText(String.valueOf(weatherData.getWind_speed()));
         seasonDataTextView.setText(weatherData.getSeason());
+
+        // get and display the current time and date as last update time
         SimpleDateFormat dateFormatUpdate = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         String currentDateAndTime = dateFormatUpdate.format(new Date());
         lastUpdateTextView.setText(getText(R.string.last_update) + currentDateAndTime);
     }
 
+    /**
+     * This method displays a dialog where the user can choose
+     * a solar day to see the weather data from.
+     * When a day is confirmed a the data is fetched directly.
+     * */
     public void showChooseNewSolDialog() {
 
         dialog.setContentView(R.layout.change_sol_dialog);
         dialog.setTitle(getText(R.string.dialog_title));
+
+        // initialize number picker with the latest solar day as a maximum
         final NumberPicker numberPicker = (NumberPicker)dialog.findViewById(R.id.solNumberPicker);
         numberPicker.setMaxValue(latestSol);
         numberPicker.setMinValue(15);
@@ -254,8 +298,8 @@ public class WeatherActivity extends AppCompatActivity {
         getButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RequestModel request = new RequestModel(numberPicker.getValue(), false);
-                new FetchData().execute(request);
+                // get the data from the entered solar day, not the latest data
+                getApiData(numberPicker.getValue(), false);
                 dialog.dismiss();
             }
         });
@@ -268,5 +312,15 @@ public class WeatherActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    /**
+     * This method calls the AsyncTask thread to get data from the API.
+     * Sol for a particular solar day (-1 for the latest data)
+     * Set latest to true when latest data is requested
+     * */
+    public void getApiData(int sol, boolean latest) {
+        RequestModel request = new RequestModel(sol, latest);
+        new FetchData().execute(request);
     }
 }

@@ -4,16 +4,20 @@ import java.io.Serializable;
 
 /**
  * Created by Nadeche Studer
- */
+ *
+ * This class holds the martian weather data received from the API.
+ * These data are shown on screen.
+ * The class implements Serializable so it can be passed to onSaveInstanceState Bundle.
+ **/
 public class WeatherDataModel implements Serializable{
 
-    private String terrestrial_date;
-    private long min_temp;
-    private long max_temp;
-    private Long wind_speed = 0L;
-    private String atmo_opacity;
-    private long sol;
-    private String season;
+    private String terrestrial_date;    // holds the earth date
+    private long min_temp;              // holds the minimum temperature in celsius
+    private long max_temp;              // holds the maximum temperature in celsius
+    private Long wind_speed = 0L;       // holds the wind speed (scale unknown)
+    private String atmo_opacity;        // holds the weather status
+    private long sol;                   // holds the martian solar day (Curiosity's landing = 0)
+    private String season;              // holds the martian season
 
     public String getSeason() {
         return season;
@@ -22,6 +26,7 @@ public class WeatherDataModel implements Serializable{
     public void setSeason(String season) {
         this.season = season;
     }
+
     public long getSol() {
         return sol;
     }

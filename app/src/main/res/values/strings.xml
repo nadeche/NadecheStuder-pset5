@@ -12,6 +12,7 @@
     <string name="no_data">No Data</string>
     <string name="loading">Loading…</string>
     <string name="dateRange">Pick a different date</string>
+    <string name="home">Get most recent date</string>
     <string name="cancel">Cancel</string>
     <string name="get">Get weather info</string>
     <string name="dialog_title">Change day</string>
