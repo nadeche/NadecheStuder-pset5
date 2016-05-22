@@ -28,19 +28,33 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Created by Nadeche Studer
+ *
+ * This activity displays the latest martian weather data sent to earth by curiosity.
+ * On start of the activity the latest data is automatically loaded.
+ * True the calender icon in the actionbar the user can request weather data from any martian solar day,
+ * since curiosity's landing on mars. Solar day 0 signifies the landing day of curiosity.
+ * Since weather data started to come in form solar day 15 the user can search from this day on.
+ * From day 15 on curiosity didn't send back data every day, so it could be that there is no weather data
+ * for the solar day the user searched for. In that case the previous data stays on screen.
+ *
+ * Weather data is gathered true the API from: marsweather.ingenology.com
+ * */
+
 public class WeatherActivity extends AppCompatActivity {
 
-    private TextView dateOfDataTextView;
-    private TextView solTextView;
-    private TextView minCelsiusTextView;
-    private TextView maxCelsiusTextView;
-    private TextView windSpeedDataTextView;
-    private TextView opacityDataTextView;
-    private TextView seasonDataTextView;
-    private TextView lastUpdateTextView;
-    private WeatherDataModel weatherData;
-    private int latestSol;
-    private Dialog dialog;
+    private TextView dateOfDataTextView;        // holds the earth date of the data
+    private TextView solTextView;               // holds the martian solar day of the data
+    private TextView minCelsiusTextView;        // holds the minimum temperature in C
+    private TextView maxCelsiusTextView;        // holds the maximum temperature in C
+    private TextView windSpeedDataTextView;     // holds the wind speed (unknown scale)
+    private TextView opacityDataTextView;       // holds the status of the weather
+    private TextView seasonDataTextView;        // holds the martian season
+    private TextView lastUpdateTextView;        // holds the date and time of the last update
+    private WeatherDataModel weatherData;       // holds the weather data send back by the API
+    private int latestSol;                      // holds the latest solar day number
+    private Dialog dialog;                      // holds the dialog to search for a differed solar day
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +63,7 @@ public class WeatherActivity extends AppCompatActivity {
         Toolbar actionBar = (Toolbar)findViewById(R.id.action_bar);
         setSupportActionBar(actionBar);
 
+        // initialize fields
         dateOfDataTextView = (TextView)findViewById(R.id.dateTextView);
         solTextView = (TextView)findViewById(R.id.solTextView);
         minCelsiusTextView = (TextView)findViewById(R.id.minCelsiusTextView);
@@ -59,10 +74,12 @@ public class WeatherActivity extends AppCompatActivity {
         lastUpdateTextView = (TextView)findViewById(R.id.lastUpdateTextView);
         dialog = new Dialog(WeatherActivity.this);
 
+        // when the activity runs for the first time get the latest weather data
         if(savedInstanceState == null){
             RequestModel request = new RequestModel(-1, true);
             new FetchData().execute(request);
         }
+        // when the activity has already run, restore the last requested weather data
         else {
             latestSol = savedInstanceState.getInt("latestSol");
             weatherData = (WeatherDataModel) savedInstanceState.getSerializable("weatherModel");
