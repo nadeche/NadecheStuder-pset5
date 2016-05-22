@@ -1,20 +1,25 @@
 package com.example.nadeche.nadechestuder_pset5;
 
-
 /**
  * Created by Nadeche Studer
  *
- * This class holds information about the type of date request to bee done.
- * It holds whether the latest data is requested or which martian solar day is requested.
- * Both values need to be given to the constructor. (sol = -1 when latest data is requested)
+ * This class contains information about the type of date request to be done.
+ * It contains whether the latest data is requested or which martian solar day is requested.
+ * The constructor with sol requests a particular solar day and
+ * the constructor without arguments requests the latest solar day.
  */
-public class RequestModel {
+class RequestModel {
 
     public int sol;          // holds the martian solar date to find
     public boolean latest;   // is true if the latest data is requested
 
-    RequestModel(int sol, boolean latest){
+    RequestModel(int sol){
         this.sol = sol;
-        this.latest = latest;
+        this.latest = false;
+    }
+
+    RequestModel() {
+        this.sol = -1;
+        this.latest = true;
     }
 }

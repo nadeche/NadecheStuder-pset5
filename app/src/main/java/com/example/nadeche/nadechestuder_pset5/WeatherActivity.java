@@ -31,32 +31,32 @@ import java.util.Date;
 /**
  * Created by Nadeche Studer
  *
- * This activity displays the latest martian weather data sent to earth by curiosity.
- * On start of the activity the latest data is automatically loaded.
- * True the calender icon in the actionbar the user can request weather data from any martian solar day,
- * since curiosity's landing on mars. Solar day 0 signifies the landing day of curiosity.
- * Since weather data started to come in form solar day 15 the user can search from this day on.
- * From day 15 on curiosity didn't send back data every day, so it could be that there is no weather data
+ * This activity displays the latest martian weather data sent to earth by Curiosity.
+ * At the start of the activity the latest data is automatically loaded.
+ * Trough the calender icon in the actionbar the user can request weather data from any martian solar day
+ * since Curiosity's landing on Mars. Solar day 0 signifies the landing day of Curiosity.
+ * Since weather data started to come in from solar day 15 the user can search from this day on.
+ * Curiosity didn't send back data every day, so it could be that there is no weather data
  * for the solar day the user searched for. In that case the previous data stays on screen.
- * To go back to the latest weather data (or check if there are new latest data)
+ * To go back to the latest weather data (or check if there is new latest data)
  * the user can tap on the home icon in the actionbar.
  *
- * Weather data is gathered true the API from: marsweather.ingenology.com
+ * Weather data is gathered through the API from: marsweather.ingenology.com
  * */
 
 public class WeatherActivity extends AppCompatActivity {
 
-    private TextView dateOfDataTextView;        // holds the earth date of the data
-    private TextView solTextView;               // holds the martian solar day of the data
-    private TextView minCelsiusTextView;        // holds the minimum temperature in C
-    private TextView maxCelsiusTextView;        // holds the maximum temperature in C
-    private TextView windSpeedDataTextView;     // holds the wind speed (unknown scale)
-    private TextView opacityDataTextView;       // holds the status of the weather
-    private TextView seasonDataTextView;        // holds the martian season
-    private TextView lastUpdateTextView;        // holds the date and time of the last update
-    private WeatherDataModel weatherData;       // holds the weather data send back by the API
-    private int latestSol;                      // holds the latest solar day number
-    private Dialog dialog;                      // holds the dialog to search for a differed solar day
+    private TextView dateOfDataTextView;        // contains the earth date of the data
+    private TextView solTextView;               // contains the martian solar day of the data
+    private TextView minCelsiusTextView;        // contains the minimum temperature in C
+    private TextView maxCelsiusTextView;        // contains the maximum temperature in C
+    private TextView windSpeedDataTextView;     // contains the wind speed (unknown scale)
+    private TextView opacityDataTextView;       // contains the status of the weather
+    private TextView seasonDataTextView;        // contains the martian season
+    private TextView lastUpdateTextView;        // contains the date and time of the last update
+    private WeatherDataModel weatherData;       // contains the weather data sent back by the API
+    private int latestSol;                      // contains the latest solar day number
+    private Dialog dialog;                      // contains the dialog to search for a different solar day
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ public class WeatherActivity extends AppCompatActivity {
 
         // when the activity runs for the first time get the latest weather data
         if(savedInstanceState == null){
-            getApiData(-1, true);
+            getApiData(null);
         }
         // when the activity has already run, restore the last requested weather data
         else {
@@ -103,7 +103,7 @@ public class WeatherActivity extends AppCompatActivity {
                 return true;
             case R.id.home:
                 // get latest weather data
-                getApiData(-1, true);
+                getApiData(null);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -163,16 +163,16 @@ public class WeatherActivity extends AppCompatActivity {
                 InputStream stream = urlConnection.getInputStream();
 
                 reader = new BufferedReader(new InputStreamReader(stream));
-                StringBuffer buffer = new StringBuffer();
-                String line = "";
+                StringBuilder builder = new StringBuilder();
+                String line;
 
                 // convert received data to a string
                 while ((line = reader.readLine()) != null) {
-                    buffer.append(line);
+                    builder.append(line);
                 }
 
                 // convert complete data to Json object
-                JSONObject reportJsonObject = new JSONObject(buffer.toString());
+                JSONObject reportJsonObject = new JSONObject(builder.toString());
 
                 // when the returned Json object of a requested solar day is empty quit this action
                 if(!requestModels[0].latest && reportJsonObject.getInt("count") == 0) {
@@ -180,11 +180,12 @@ public class WeatherActivity extends AppCompatActivity {
                 }
 
                 JSONObject weatherDataJsonObj;
-                // when the latest data was requested there is no extra Json array
+                // when the latest data was requested the weather data can be found in the report object
                 if(requestModels[0].latest) {
                     weatherDataJsonObj = reportJsonObject.getJSONObject("report");
                 }
-                // when a particular solar day was requested there is an extra Json array to get
+                /* when a particular solar day was requested there is an extra Json array to get
+                 * which resides in the results object */
                 else {
                     JSONArray resultArrayJsonObject = reportJsonObject.getJSONArray("results");
                     weatherDataJsonObj = resultArrayJsonObject.getJSONObject(0);
@@ -198,7 +199,7 @@ public class WeatherActivity extends AppCompatActivity {
                 Date date = originalDateFormat.parse(weatherDataJsonObj.getString("terrestrial_date"));
                 weatherData.setTerrestrial_date(dateFormat.format(date));
 
-                // save the other returned data to in a weatherDataModel
+                // save the other returned data in a weatherDataModel
                 weatherData.setSol(weatherDataJsonObj.getLong("sol"));
                 weatherData.setMax_temp(weatherDataJsonObj.getLong("max_temp"));
                 weatherData.setMin_temp(weatherDataJsonObj.getLong("min_temp"));
@@ -206,7 +207,7 @@ public class WeatherActivity extends AppCompatActivity {
                 weatherData.setWind_speed(weatherDataJsonObj.optLong("wind_speed"));
                 weatherData.setSeason(weatherDataJsonObj.getString("season"));
 
-                // when the latest data are requested save the solar date(for max numberPicker)
+                // when the latest data is requested save the solar date (for max numberPicker)
                 if(requestModels[0].latest) {
                     latestSol = (int) weatherData.getSol();
                 }
@@ -246,16 +247,16 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     /**
-     * This method displays the receivedWeather data to the screen.
+     * This method displays the received weather data to the screen.
      * It checks whether the weather status has a value.
      * It gets the current date and time to display as update time.
      * */
-    public void setDataToView (WeatherDataModel weatherData) {
+    private void setDataToView(WeatherDataModel weatherData) {
 
         solTextView.setText(String.valueOf(weatherData.getSol()));
         dateOfDataTextView.setText(weatherData.getTerrestrial_date());
 
-        // set a degrees celsius behind the temperatures values
+        // set a degrees celsius character behind the temperatures values
         maxCelsiusTextView.setText(String.valueOf(weatherData.getMax_temp())+ (char) 0x00B0 + "C");
         minCelsiusTextView.setText(String.valueOf(weatherData.getMin_temp()) + (char) 0x00B0 + "C");
 
@@ -279,9 +280,9 @@ public class WeatherActivity extends AppCompatActivity {
     /**
      * This method displays a dialog where the user can choose
      * a solar day to see the weather data from.
-     * When a day is confirmed a the data is fetched directly.
+     * When a day is confirmed the data is fetched directly.
      * */
-    public void showChooseNewSolDialog() {
+    private void showChooseNewSolDialog() {
 
         dialog.setContentView(R.layout.change_sol_dialog);
         dialog.setTitle(getText(R.string.dialog_title));
@@ -298,8 +299,8 @@ public class WeatherActivity extends AppCompatActivity {
         getButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // get the data from the entered solar day, not the latest data
-                getApiData(numberPicker.getValue(), false);
+                // get the data from the entered solar day
+                getApiData(numberPicker.getValue());
                 dialog.dismiss();
             }
         });
@@ -316,11 +317,18 @@ public class WeatherActivity extends AppCompatActivity {
 
     /**
      * This method calls the AsyncTask thread to get data from the API.
-     * Sol for a particular solar day (-1 for the latest data)
-     * Set latest to true when latest data is requested
+     * Uses sol for a particular solar day.
+     * Use null to request latest data.
      * */
-    public void getApiData(int sol, boolean latest) {
-        RequestModel request = new RequestModel(sol, latest);
+    private void getApiData(Integer sol) {
+        RequestModel request;
+        if (sol == null) {
+            request = new RequestModel();
+        }
+        else {
+            request = new RequestModel(sol);
+        }
+
         new FetchData().execute(request);
     }
 }
