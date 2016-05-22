@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/background"
     tools:context="com.example.nadeche.nadechestuder_pset5.WeatherActivity">
 
     <android.support.v7.widget.Toolbar
@@ -12,17 +12,17 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat"/>
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"/>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/action_bar">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/background_photo_activity"/>
+            android:src="@drawable/curiosity_sol1344_navcamleftb_ratio"/>
     </FrameLayout>
 
     <RelativeLayout
@@ -37,30 +37,52 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:id="@+id/datum_block"
-            android:paddingTop="@dimen/frame_margin"
-            android:paddingLeft="@dimen/frame_margin"
-            android:paddingBottom="@dimen/frame_margin"
-            android:paddingRight="@dimen/frame_margin"
-            android:background="@color/backgroundText">
+            style="@style/TextBlock">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/solTextView"
-                android:text="@string/solar_day"
-                android:textStyle="bold"
-                android:textSize="18sp"/>
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/solDayTextView"
+                    android:text="@string/solar_day"
+                    android:textSize="16sp"/>
 
-            <TextView
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/earthDateTextView"
+                    android:text="@string/weather_data_from"
+                    android:textSize="16sp"
+                    android:layout_marginTop="7dp"
+                    android:layout_gravity="right"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/dateTextView"
-                android:text="@string/weather_data_from"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_marginTop="12dp"/>
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/solTextView"
+                    android:text="1255"
+                    android:textStyle="bold"
+                    android:textSize="18sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/dateTextView"
+                    android:text="date"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
+
         </LinearLayout>
 
 
@@ -70,21 +92,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="@dimen/frame_margin"
-            android:paddingLeft="@dimen/frame_margin"
-            android:paddingBottom="@dimen/frame_margin"
-            android:paddingRight="@dimen/frame_margin"
-            android:background="@color/backgroundText"
+            style="@style/TextBlock"
             android:layout_alignBottom="@+id/max_temp_block"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true">
 
-            <TextView
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/minTempTextView"
-                android:text="@string/min_temp_c"
-                android:textSize="20sp"/>
+                android:src="@drawable/moon"
+                android:layout_gravity="center_horizontal"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -99,23 +116,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="@dimen/frame_margin"
-            android:paddingLeft="@dimen/frame_margin"
-            android:paddingBottom="@dimen/frame_margin"
-            android:paddingRight="@dimen/frame_margin"
-            android:background="@color/backgroundText"
+            style="@style/TextBlock"
             android:id="@+id/max_temp_block"
             android:layout_below="@+id/datum_block"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginTop="100dp">
 
-            <TextView
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/maxTempTextView"
-                android:text="@string/max_temp_c"
-                android:textSize="20sp"/>
+                android:src="@drawable/sun"
+                android:layout_gravity="center_horizontal"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -131,15 +143,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="@dimen/frame_margin"
-            android:paddingLeft="@dimen/frame_margin"
-            android:paddingBottom="@dimen/frame_margin"
-            android:paddingRight="@dimen/frame_margin"
+            style="@style/TextBlock"
             android:layout_marginBottom="90dp"
-            android:layout_marginRight="20dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:background="@color/backgroundText"
             android:id="@+id/linearLayout2">
 
             <LinearLayout
@@ -152,16 +159,25 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/windTextView"
                     android:text="@string/wind_speed"
-                    android:textSize="18sp"/>
+                    android:textSize="16sp"
+                    android:layout_gravity="end"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/opacityTextView"
                     android:text="@string/opacity"
-                    android:layout_marginTop="20dp"
-                    android:textSize="18sp"
+                    android:layout_marginTop="7dp"
+                    android:textSize="16sp"
                     android:layout_gravity="end"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/seasonTextView"
+                    android:text="@string/season"
+                    android:layout_marginTop="7dp"
+                    android:textSize="16sp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -183,7 +199,16 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/opacityDataTextView"
                     android:text="Clear"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="4dp"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_gravity= "start"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/seasonDataTextView"
+                    android:layout_marginTop="4dp"
                     android:textStyle="bold"
                     android:textSize="18sp"
                     android:layout_gravity= "start"/>
@@ -194,8 +219,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/lastUpdateTextView"
+        style="@style/TextBlock"
         android:text="@string/last_update"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"/>
+
     </RelativeLayout>
 </RelativeLayout>

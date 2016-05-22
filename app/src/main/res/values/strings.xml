@@ -8,6 +8,7 @@
     <string name="max_temp_c">"Max Temp "</string>
     <string name="wind_speed">"Wind Speed: "</string>
     <string name="opacity">"Status: "</string>
+    <string name="season">"Martian season: "</string>
     <string name="no_data">No Data</string>
     <string name="loading">Loading…</string>
     <string name="dateRange">Pick a different date</string>
@@ -15,5 +16,6 @@
     <string name="get">Get weather info</string>
     <string name="dialog_title">Change day</string>
     <string name="dialog_message">Choose a different martian solar day</string>
+    <string name="toast_message">No data available for this day</string>
 
 </resources>

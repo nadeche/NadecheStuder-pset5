@@ -13,7 +13,15 @@ public class WeatherDataModel implements Serializable{
     private Long wind_speed = 0L;
     private String atmo_opacity;
     private long sol;
+    private String season;
 
+    public String getSeason() {
+        return season;
+    }
+
+    public void setSeason(String season) {
+        this.season = season;
+    }
     public long getSol() {
         return sol;
     }

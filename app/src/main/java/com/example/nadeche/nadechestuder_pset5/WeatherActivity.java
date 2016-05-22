@@ -3,11 +3,9 @@ package com.example.nadeche.nadechestuder_pset5;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,9 +36,11 @@ public class WeatherActivity extends AppCompatActivity {
     private TextView maxCelsiusTextView;
     private TextView windSpeedDataTextView;
     private TextView opacityDataTextView;
+    private TextView seasonDataTextView;
     private TextView lastUpdateTextView;
     private WeatherDataModel weatherData;
     private int latestSol;
+    private Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +55,9 @@ public class WeatherActivity extends AppCompatActivity {
         maxCelsiusTextView = (TextView)findViewById(R.id.maxCelsiusTextView);
         windSpeedDataTextView = (TextView)findViewById(R.id.windDataTextView);
         opacityDataTextView = (TextView)findViewById(R.id.opacityDataTextView);
+        seasonDataTextView = (TextView)findViewById(R.id.seasonDataTextView);
         lastUpdateTextView = (TextView)findViewById(R.id.lastUpdateTextView);
+        dialog = new Dialog(WeatherActivity.this);
 
         if(savedInstanceState == null){
             RequestModel request = new RequestModel(-1, true);
@@ -65,7 +67,6 @@ public class WeatherActivity extends AppCompatActivity {
             latestSol = savedInstanceState.getInt("latestSol");
             weatherData = (WeatherDataModel) savedInstanceState.getSerializable("weatherModel");
             setDataToView(weatherData);
-            Log.d("latestSol", String.valueOf(latestSol));
         }
     }
 
@@ -79,42 +80,17 @@ public class WeatherActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.dateRange:
-                final Dialog dialog = new Dialog(WeatherActivity.this);
-                dialog.setContentView(R.layout.change_sol_dialog);
-                dialog.setTitle(getText(R.string.dialog_title));
-                final NumberPicker numberPicker = (NumberPicker)dialog.findViewById(R.id.solNumberPicker);
-                numberPicker.setMaxValue(latestSol);
-                numberPicker.setMinValue(15);
-                numberPicker.setWrapSelectorWheel(true);
-
-                Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
-                Button getButton = (Button)dialog.findViewById(R.id.getButton);
-
-                getButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        RequestModel request = new RequestModel(numberPicker.getValue(), false);
-                        new FetchData().execute(request);
-                        String newSol = String.valueOf(numberPicker.getValue());
-                        Log.d("newSol", newSol);
-                        dialog.dismiss();
-                    }
-                });
-
-                cancelButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-
-                dialog.show();
-
-
+                showChooseNewSolDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dialog.dismiss();
     }
 
     @Override
@@ -164,13 +140,10 @@ public class WeatherActivity extends AppCompatActivity {
                 }
 
                 String completeJsonString = buffer.toString();
-                Log.d("Return", completeJsonString);
 
                 JSONObject reportJsonObject = new JSONObject(completeJsonString);
-                Log.d("reportJsonObject", reportJsonObject.toString());
 
                 if(!params[0].latest && reportJsonObject.getInt("count") == 0) {
-                    Log.d("weatherData Sol", String.valueOf(weatherData.getSol()));
                     return null;
                 }
 
@@ -195,6 +168,7 @@ public class WeatherActivity extends AppCompatActivity {
                 weatherData.setMin_temp(weatherDataJsonObj.getLong("min_temp"));
                 weatherData.setAtmo_opacity(weatherDataJsonObj.getString("atmo_opacity"));
                 weatherData.setWind_speed(weatherDataJsonObj.optLong("wind_speed"));
+                weatherData.setSeason(weatherDataJsonObj.getString("season"));
 
                 if(params[0].latest) {
                     latestSol = (int) weatherData.getSol();
@@ -223,17 +197,16 @@ public class WeatherActivity extends AppCompatActivity {
             progressDialog.dismiss();
 
             if(weatherData == null){
-                Toast.makeText(WeatherActivity.this, "No data found for this day", Toast.LENGTH_SHORT).show();
+                Toast.makeText(WeatherActivity.this, getText(R.string.toast_message), Toast.LENGTH_SHORT).show();
                 return;
             }
             setDataToView(weatherData);
-
         }
     }
 
     public void setDataToView (WeatherDataModel weatherData) {
-        solTextView.setText(getText(R.string.solar_day) + String.valueOf(weatherData.getSol()));
-        dateOfDataTextView.setText(getText(R.string.weather_data_from) + weatherData.getTerrestrial_date());
+        solTextView.setText(String.valueOf(weatherData.getSol()));
+        dateOfDataTextView.setText(weatherData.getTerrestrial_date());
         maxCelsiusTextView.setText(String.valueOf(weatherData.getMax_temp())+ (char) 0x00B0 + "C");
         minCelsiusTextView.setText(String.valueOf(weatherData.getMin_temp()) + (char) 0x00B0 + "C");
         if(weatherData.getAtmo_opacity().equals("null")) {
@@ -243,8 +216,40 @@ public class WeatherActivity extends AppCompatActivity {
             opacityDataTextView.setText(weatherData.getAtmo_opacity());
         }
         windSpeedDataTextView.setText(String.valueOf(weatherData.getWind_speed()));
+        seasonDataTextView.setText(weatherData.getSeason());
         SimpleDateFormat dateFormatUpdate = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         String currentDateAndTime = dateFormatUpdate.format(new Date());
         lastUpdateTextView.setText(getText(R.string.last_update) + currentDateAndTime);
+    }
+
+    public void showChooseNewSolDialog() {
+
+        dialog.setContentView(R.layout.change_sol_dialog);
+        dialog.setTitle(getText(R.string.dialog_title));
+        final NumberPicker numberPicker = (NumberPicker)dialog.findViewById(R.id.solNumberPicker);
+        numberPicker.setMaxValue(latestSol);
+        numberPicker.setMinValue(15);
+        numberPicker.setWrapSelectorWheel(true);
+
+        Button cancelButton = (Button)dialog.findViewById(R.id.cancelButton);
+        Button getButton = (Button)dialog.findViewById(R.id.getButton);
+
+        getButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RequestModel request = new RequestModel(numberPicker.getValue(), false);
+                new FetchData().execute(request);
+                dialog.dismiss();
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 }
