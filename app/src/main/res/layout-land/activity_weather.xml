@@ -64,37 +64,6 @@
         </LinearLayout>
 
 
-
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="@dimen/frame_margin"
-            android:paddingLeft="@dimen/frame_margin"
-            android:paddingBottom="@dimen/frame_margin"
-            android:paddingRight="@dimen/frame_margin"
-            android:background="@color/backgroundText"
-            android:layout_alignBottom="@+id/max_temp_block"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/minTempTextView"
-                android:text="@string/min_temp_c"
-                android:textSize="20sp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/minCelsiusTextView"
-                android:text="C"
-                android:textSize="28sp"
-                android:textStyle="bold"/>
-        </LinearLayout>
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -108,7 +77,8 @@
             android:layout_below="@+id/datum_block"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="100dp">
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="120dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -126,6 +96,38 @@
                 android:textStyle="bold"/>
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/frame_margin"
+            android:paddingLeft="@dimen/frame_margin"
+            android:paddingBottom="@dimen/frame_margin"
+            android:paddingRight="@dimen/frame_margin"
+            android:background="@color/backgroundText"
+            android:layout_alignBottom="@+id/max_temp_block"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="120dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/minTempTextView"
+                android:text="@string/min_temp_c"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/minCelsiusTextView"
+                android:text="C"
+                android:textSize="28sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+
+
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -135,12 +137,9 @@
             android:paddingLeft="@dimen/frame_margin"
             android:paddingBottom="@dimen/frame_margin"
             android:paddingRight="@dimen/frame_margin"
-            android:layout_marginBottom="90dp"
-            android:layout_marginRight="20dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:background="@color/backgroundText"
-            android:id="@+id/linearLayout2">
+            android:background="@color/backgroundText">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -193,9 +192,14 @@
         <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingTop="@dimen/frame_margin"
+        android:paddingLeft="@dimen/frame_margin"
+        android:paddingBottom="@dimen/frame_margin"
+        android:paddingRight="@dimen/frame_margin"
         android:id="@+id/lastUpdateTextView"
         android:text="@string/last_update"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:background="@color/backgroundText"/>
     </RelativeLayout>
 </RelativeLayout>

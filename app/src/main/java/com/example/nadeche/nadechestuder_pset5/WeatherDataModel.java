@@ -1,15 +1,26 @@
 package com.example.nadeche.nadechestuder_pset5;
 
+import java.io.Serializable;
+
 /**
  * Created by Nadeche Studer
  */
-public class WeatherDataModel {
+public class WeatherDataModel implements Serializable{
 
     private String terrestrial_date;
     private long min_temp;
     private long max_temp;
     private Long wind_speed = 0L;
     private String atmo_opacity;
+    private long sol;
+
+    public long getSol() {
+        return sol;
+    }
+
+    public void setSol(long sol) {
+        this.sol = sol;
+    }
 
     public String getAtmo_opacity() {
         return atmo_opacity;
