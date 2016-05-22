@@ -21,7 +21,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/curiosity_selfie_landscape"/>
+            android:src="@drawable/curiosity_selfie"/>
     </FrameLayout>
 
     <RelativeLayout
